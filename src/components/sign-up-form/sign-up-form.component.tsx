@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createUserDocumentFromAuth, signUpAuthUserWithEmailAndPassword } from "../../firebase/firebase.utils";
+import { createUserDocumentFromAuth, signUpAuthUserWithEmailAndPassword, updateAuthUserProfile } from "../../firebase/firebase.utils";
 import { SignUpData } from "../../models/signup.model";
 import Button from "../button/button.component";
 import FormInput from "../form-input/form-input.component";
@@ -25,7 +25,7 @@ const SignUpForm = () =>{
 
   const resetFormFields = () => setFormFields(defaultFormFields);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     //console.log({ displayName, email, password, confirmPassword } );
     if(password !== confirmPassword) {
@@ -37,9 +37,11 @@ const SignUpForm = () =>{
       const userCredential = await signUpAuthUserWithEmailAndPassword(email, password);
       
       if(!userCredential) throw new Error("Failed to Register the user");
-    
-      const userDoc = await createUserDocumentFromAuth(userCredential.user, {displayName});
+      const { user } = userCredential;
+      await updateAuthUserProfile(user, {displayName});
+      const userDoc = await createUserDocumentFromAuth(user);
       console.log("User registered", userDoc);     
+
       resetFormFields();  
     } catch(err: any) {
       const errMsg = typeof err.code === "string" && err.code in errorMessage
@@ -54,11 +56,13 @@ const SignUpForm = () =>{
     setFormFields({...formFields, [name]: value});
   }
 
+  //console.log("Sign Up render");
+
   return (
     <div className="sign-up-container">
       <h2>Don't have an account?</h2>
       <span>Sign up with email and password</span>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSignUp}>
         <FormInput         
           label="Display Name"
           onChange={handleChange}

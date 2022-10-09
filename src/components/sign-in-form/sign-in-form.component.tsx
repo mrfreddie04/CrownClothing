@@ -27,27 +27,33 @@ const SignInForm = () => {
   const signInWithGoogle = async () => {
     try {
       //setError("");
-      const response = await signInWithGooglePopup();
-      await createUserDocumentFromAuth(response.user);
-      //const userDoc = 
+      await signInWithGooglePopup();
+      const userCredential = await signInWithGooglePopup();
+      const { user } = userCredential;
+      await createUserDocumentFromAuth(user); //moved to the auth state change callback (observer)
     } catch(err: any) {
       //setError(err.message);
       console.log("Login failed: ", err.message);
     }
   }  
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({ email, password} );
+    //console.log({ email, password} );
 
     try {
       const userCredential = await signInAuthUserWithEmailAndPassword(email, password);
       
       if(!userCredential) throw new Error("Could not complete login");
 
-      console.log(userCredential.user);
+      //const { user } = userCredential;
+
+      //setUser(user);
+
+      //console.log(user);
      
       resetFormFields();  
+
     } catch(err: any) {
       const errMsg = typeof err.code === "string" && err.code in errorMessage
         ? errorMessage[err.code as string]
@@ -61,11 +67,13 @@ const SignInForm = () => {
     setFormFields({...formFields, [name]: value});
   }
 
+  //console.log("Sign In render");
+
   return (
     <div className="sign-in-container">
       <h2>Already have an account?</h2>
       <span>Sign in with email and password</span>
-      <form onSubmit={handleSubmit}>   
+      <form onSubmit={handleSignIn}>   
         <FormInput         
           label="Email"
           onChange={handleChange}

@@ -7,7 +7,10 @@ import {
   GoogleAuthProvider, 
   User,
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  updateProfile,
+  signOut,
+  onAuthStateChanged
 } from "firebase/auth";       //firestore authentication services
 
 import { 
@@ -32,16 +35,18 @@ const signInWithGoogleRedirect = () => signInWithRedirect(auth, provider);
 const signUpAuthUserWithEmailAndPassword = async (email: string, password: string) => {
   if(!email || !password) return;
   return await createUserWithEmailAndPassword(auth, email, password);
-  // if(displayName) {
-  //   await updateProfile(userCredential.user, {displayName:displayName});
-  // }
-  //return userCredential;
 }  
 
 const signInAuthUserWithEmailAndPassword = async (email: string, password: string) => {
   if(!email || !password) return;
   return await signInWithEmailAndPassword(auth, email, password);
 }  
+
+const signOutAuthUser = () => signOut(auth);
+
+const updateAuthUserProfile = updateProfile;
+
+const onAuthUserStateChanged = (callback: (user:User | null)=>void) => onAuthStateChanged(auth, callback);
 
 //create user document
 const createUserDocumentFromAuth = async (user: User, extra: {[key:string]:any} = {}) => {
@@ -70,7 +75,10 @@ const createUserDocumentFromAuth = async (user: User, extra: {[key:string]:any} 
 export { auth, db, Timestamp, 
   signUpAuthUserWithEmailAndPassword,
   signInAuthUserWithEmailAndPassword, 
+  signOutAuthUser,
+  updateAuthUserProfile,
   signInWithGooglePopup, 
   createUserDocumentFromAuth, 
   signInWithGoogleRedirect,
+  onAuthUserStateChanged 
 };
