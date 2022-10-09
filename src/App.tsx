@@ -18,7 +18,7 @@ const App = () => {
       {isReady && (<Routes>
         <Route path='/' element={<NavBar/>}>
           <Route index element={ user ? <Home/> : <Navigate to="/auth" />} />
-          <Route path='shop' element={ user ? <Shop/> : <Navigate to="/auth" />} />
+          <Route path='shop/*' element={ user ? <Shop/> : <Navigate to="/auth" />} />
           <Route path='checkout' element={ user ? <Checkout/> : <Navigate to="/auth" />} />
           <Route path='auth' element={ !user ? <Authenticate/> : <Navigate to="/" /> } />
           <Route path="*" element={<NotFound/>}/>

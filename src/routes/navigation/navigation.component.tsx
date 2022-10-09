@@ -1,12 +1,13 @@
-import { Link, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { ReactComponent as CrownLogo} from "../../assets/crown.svg";
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { signOutAuthUser } from '../../firebase/firebase.utils';
 
-import "./navigation.styles.scss";
 import CartIcon from '../../components/cart-icon/cart-icon.component';
 import CartDropdown from '../../components/cart-dropdown/cart-dropdown.component';
 import { useCartContext } from '../../hooks/useCartContext';
+
+import { Navigation, Logo, NavLinks, NavLink, MainContent } from "./navigation.styles";
 
 const NavBar = () => {
   
@@ -24,33 +25,34 @@ const NavBar = () => {
 
   return (
     <>
-      <nav className='navigation'>
-        <Link to="/" className='logo-container'>
-          <CrownLogo className='logo'/>
-        </Link>
-        <div className='nav-links-container'>
+      <Navigation>
+        <Logo to="/">
+          <CrownLogo />
+        </Logo>
+        <NavLinks>
           {user && 
             <>
-              <Link to="/" className='nav-link'>Home</Link>
-              <Link to="/shop" className='nav-link'>Shop</Link>
+              <NavLink to="/">Home</NavLink>
+              <NavLink to="/shop">Shop</NavLink>
             </>
           }  
-          {!user && <Link to="/auth" className='nav-link'>Sign In</Link>}
+          {!user && <NavLink to="/auth">Sign In</NavLink>}
           {user &&
             <>
-              {/* <span className='nav-link'>Hello, {user.displayName}</span> */}
-              <span className='nav-link' onClick={handleSignOut} >Logout</span>
+              <NavLink as="span" onClick={handleSignOut}>Logout</NavLink>
               <CartIcon />
             </>
           }          
-        </div>
+        </NavLinks>
         {isCartOpen && <CartDropdown/>}
-      </nav>
-      <div className='main-content'>
+      </Navigation>
+      <MainContent>
         <Outlet></Outlet>
-      </div>
+      </MainContent>
     </>
   );
 }
 
 export default NavBar;
+
+//              {/* <span className='nav-link'>Hello, {user.displayName}</span> */}

@@ -15,7 +15,8 @@ import {
 
 import { 
   doc, getDoc, setDoc,
-  //collection, addDoc, deleteDoc, updateDoc,
+  collection, writeBatch,
+  query, getDocs,
   Timestamp
 } from "firebase/firestore";  //firestore database
 
@@ -72,6 +73,41 @@ const createUserDocumentFromAuth = async (user: User, extra: {[key:string]:any} 
   return docRef;
 }
 
+//bcp json into fb
+const addCollectionAndDocuments = async <T extends {[key: string]: any}>(
+    collectionKey: string, 
+    objects: T[],
+    getPath: (object: T) => string
+  ) => {
+  const colRef = collection(db, collectionKey);
+  const batch = writeBatch(db); //instantiate batch class
+  objects.forEach( object => {
+    const docRef = doc(colRef, getPath(object)); //object.title.toLowerCase()
+    batch.set(docRef, object);
+  });
+  batch.commit();
+  console.log("done");
+}
+
+const getCollectionAndDocuments = async <T,K>(
+    collectionKey: string,
+    getPath: (object: T) => string,
+    getData: (object: T) => K
+  ) => {
+  const colRef = collection(db, collectionKey);
+  const q = query(colRef); //we need to convert colection reference to query to get a snapshop
+  const querySnapshot = await getDocs(q);
+  
+  //get collection (array) of documents and reduce to object keyed by categories
+  const categoryMap = querySnapshot.docs.reduce<{[key: string]: K}>( (acc, doc) => {
+    const object = doc.data() as T;
+    acc[getPath(object)] = getData(object);
+    return acc;
+  },{});
+
+  return categoryMap;
+}
+
 export { auth, db, Timestamp, 
   signUpAuthUserWithEmailAndPassword,
   signInAuthUserWithEmailAndPassword, 
@@ -80,5 +116,7 @@ export { auth, db, Timestamp,
   signInWithGooglePopup, 
   createUserDocumentFromAuth, 
   signInWithGoogleRedirect,
-  onAuthUserStateChanged 
+  onAuthUserStateChanged,
+  addCollectionAndDocuments,
+  getCollectionAndDocuments
 };
