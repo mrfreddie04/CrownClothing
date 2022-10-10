@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { createUserDocumentFromAuth, signUpAuthUserWithEmailAndPassword, updateAuthUserProfile } from "../../firebase/firebase.utils";
+import { 
+  createUserDocumentFromAuth, 
+  signUpAuthUserWithEmailAndPassword, 
+  updateAuthUserProfile 
+} from "../../firebase/firebase.utils";
 import { SignUpData } from "../../models/signup.model";
 import Button from "../button/button.component";
 import FormInput from "../form-input/form-input.component";
