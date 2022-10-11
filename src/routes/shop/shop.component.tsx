@@ -1,24 +1,17 @@
 import "./shop.styles.scss";
 import { Route, Routes } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+//import { useDispatch } from 'react-redux';
 import CategoriesPreview from "../categories-preview/categories-preview.component";
 import Category from "../category/category.component";
 import { useEffect } from "react";
-import { getCollectionAndDocuments } from "../../firebase/firebase.utils";
-import { CategoryDoc } from "../../models/category.model";
-import { setCategories } from "../../store/category/category.action";
+import { fetchCategoriesStartAsync } from "../../store/category/category.action";
+import { useAppDispatch } from "../../hooks/useAppDispatch";
 
 const Shop = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    //console.log("Dispatch Categories")
-    getCollectionAndDocuments<CategoryDoc>("categories")
-      .then( categories => {
-        //console.log(categories);
-        dispatch(setCategories(categories));
-      })
-      .catch(err => console.log(err));  
+    dispatch(fetchCategoriesStartAsync());
   // eslint-disable-next-line  
   },[]); 
     

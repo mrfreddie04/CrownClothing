@@ -10,10 +10,10 @@ export type CartAction =
   {type: CartActionType.SET_CART_ITEMS, payload: CartItem[];} 
   | {type: CartActionType.SET_CART_OPEN, payload: boolean;};
 
-const INITIAL_STATE: CartState = {cartItems: [], isCartOpen: false };  
+const CART_INITIAL_STATE: CartState = {cartItems: [], isCartOpen: false };  
 
 export const cartReducer //: (state: CartState, action: CartAction) => CartState
-    = (state: CartState = INITIAL_STATE, action: CartAction): CartState => {
+    = (state: CartState = CART_INITIAL_STATE, action: CartAction): CartState => {
   switch (action.type) {
     case CartActionType.SET_CART_ITEMS:
       return {...state, cartItems: action.payload};    

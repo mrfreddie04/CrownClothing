@@ -8,10 +8,10 @@ export type UserState = {
   isReady: boolean;
 }
 
-const INITIAL_STATE: UserState = {user: null, isReady: false};
+const USER_INITIAL_STATE: UserState = {user: null, isReady: false};
 
 export const userReducer //: (state: UserState, action: UserAction) => UserState
-      = (state: UserState = INITIAL_STATE, action: UserAction): UserState => {
+      = (state: UserState = USER_INITIAL_STATE, action: UserAction): UserState => {
   //console.log("dispatch user", action);
   switch(action.type) {
     case UserActionType.SET_CURRENT_USER:

@@ -8,7 +8,7 @@ import { rootReducer } from "./root-reducer";
 const persistConfig = {
   key: "root", //persist everything
   storage: storage,
-  blacklist: ['user'] //reducers we do not want to persist - user is coming automatically from firebase
+  whitelist: ['cart'] //reducers we do not want to persist - user is coming automatically from firebase
 }
 
 //pass persist config and combine root reducer

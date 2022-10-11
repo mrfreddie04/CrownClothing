@@ -113,6 +113,9 @@ const getCollectionAndDocuments = async <T>(collectionKey: string) =>
   const colRef = collection(db, collectionKey);
   const q = query(colRef); //we need to convert colection reference to query to get a snapshop
   const querySnapshot = await getDocs(q);
+
+  //await Promise.reject(new Error("Test error"));
+
   return querySnapshot.docs.map( doc => ({id: doc.id, ...doc.data()}) as T);
 }
 

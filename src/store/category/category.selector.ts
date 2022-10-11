@@ -1,12 +1,10 @@
 import { createSelector } from "reselect";
-import { CategoryMap } from "../../models/category.model";
 import { Product } from "../../models/product.model";
 import { RootState } from "../store";
 
-const selectCategorySlice = (state: RootState) => {
-  //console.log("selectCategorySlice");
-  return state.categories;
-}
+const selectCategorySlice = (state: RootState) => state.categories;
+const selectCategorySliceIsLoading = (state: RootState) => state.categories.isLoading;
+//const selectCategorySliceMap = (state: RootState) => state.categories.categories;
 
 export const selectCategories = createSelector(
   [selectCategorySlice],
@@ -18,13 +16,18 @@ export const selectCategories = createSelector(
 
 export const selectCategoriesMap =  createSelector(
   [selectCategories],
-  (categories): CategoryMap => {
+  (categories) => ({
     //console.log("selectCategoriesMap",categories);
-    return categories.reduce<{[key: string]: Product[]}>( (acc, category) => {
+    categories: categories.reduce<{[key: string]: Product[]}>( (acc, category) => {
       acc[category.title.toLowerCase()] = category.items;
       return acc;
     },{})    
-  }  
+  })  
+);
+
+export const selectCategoriesIsLoading = createSelector(
+  [selectCategorySliceIsLoading],
+  (isLoading) => ({isLoading})
 );
 
 // export const selectCategoriesMapFull =  createSelector(
