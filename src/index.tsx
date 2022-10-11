@@ -4,24 +4,31 @@ import './index.scss';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
-import AuthContextProvider from './context/AuthContext';
-import CategoryContextProvider  from './context/CategoryContext';
-import CartContextProvider from './context/CartContext';
+import { Provider } from 'react-redux';
+import { persistor, store } from './store/store';
+import { PersistGate } from "redux-persist/integration/react";
+//import CartContextProvider from './context/CartContext';
+//import AuthContextProvider from './context/AuthContext';
+//import CategoryContextProvider from './context/CategoryContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <AuthContextProvider>
-        <CategoryContextProvider >
-          <CartContextProvider>
-            <App />
-          </CartContextProvider>
-        </CategoryContextProvider>  
-      </AuthContextProvider>
-    </BrowserRouter>
+    <Provider store={store}>
+      <PersistGate persistor={persistor} loading={null}>
+        <BrowserRouter>
+          {/* <AuthContextProvider> */}
+            {/* <CategoryContextProvider> */}
+              {/* <CartContextProvider> */}
+                <App />
+              {/* </CartContextProvider> */}
+            {/* </CategoryContextProvider> */}
+          {/* </AuthContextProvider> */}
+        </BrowserRouter>
+      </PersistGate>
+    </Provider>
   </React.StrictMode>
 );
 

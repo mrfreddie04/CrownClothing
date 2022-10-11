@@ -1,18 +1,21 @@
 import { Outlet } from 'react-router-dom';
 import { ReactComponent as CrownLogo} from "../../assets/crown.svg";
-import { useAuthContext } from '../../hooks/useAuthContext';
+//import { useAuthContext } from '../../hooks/useAuthContext';
 import { signOutAuthUser } from '../../firebase/firebase.utils';
 
 import CartIcon from '../../components/cart-icon/cart-icon.component';
 import CartDropdown from '../../components/cart-dropdown/cart-dropdown.component';
-import { useCartContext } from '../../hooks/useCartContext';
 
 import { Navigation, Logo, NavLinks, NavLink, MainContent } from "./navigation.styles";
+import { useAppSelector } from '../../hooks/useAppSelector';
+import { selectCartIsOpen } from '../../store/cart/cart.selector';
+import { selectUser } from '../../store/user/user.selector';
 
 const NavBar = () => {
   
-  const { user } = useAuthContext();
-  const { isCartOpen } = useCartContext();
+  //const { user } = useAuthContext();
+  const { user }  = useAppSelector(selectUser);
+  const { isCartOpen } = useAppSelector(selectCartIsOpen);   
 
   //console.log("Navbar render");
   const handleSignOut = async () => {

@@ -6,21 +6,25 @@ interface Props {
   children: React.ReactNode;
 }
 
+enum AuthActions {
+  SET_CURRENT_USER = 'SET_CURRENT_USER'
+};
+
 type Action =  
-  {type: "LOGIN"; payload: User;} | {type: "LOGOUT";};
+  {type: AuthActions.SET_CURRENT_USER; payload: User |null;}
 
 interface State {
   user: User | null;
   isReady: boolean;
 }
 
+const initial_state: State = {user: null, isReady: false};
+
 const authReducer: Reducer<State,Action> = (state: State, action: Action): State => {
   //console.log("dispatch", action);
   switch(action.type) {
-    case "LOGIN":
+    case AuthActions.SET_CURRENT_USER:
       return {...state, user: action.payload, isReady: true};  
-    case "LOGOUT":
-      return {...state, user: null, isReady: true};  
     default:
       throw new Error('Unhandled Auth action type');
       //return state; //or throw an error
@@ -38,16 +42,16 @@ export const AuthContext = createContext<AuthContextInterface>(
 );
 
 const AuthContextProvider = ({children}: Props) => {
-  const [state, dispatch] = useReducer(authReducer, {user: null, isReady: false});
+  const [state, dispatch] = useReducer(authReducer, initial_state);
 
   useEffect(() => {
     //console.log("Register Observer")
     const unsub = onAuthUserStateChanged((user) =>{
       if(user) {
-        dispatch({type: "LOGIN", payload: user});
+        dispatch({type: AuthActions.SET_CURRENT_USER, payload: user});
       } 
       else if(!user) {
-        dispatch({type: "LOGOUT"});
+        dispatch({type: AuthActions.SET_CURRENT_USER, payload: null});
       } 
     });
 

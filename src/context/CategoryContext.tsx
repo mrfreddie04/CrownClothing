@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react'
 import { getCollectionAndDocuments } from '../firebase/firebase.utils';
-import { CategoryDb, CategoryMap } from '../models/category.model';
+import { CategoryDoc, CategoryMap } from '../models/category.model';
 import { Product } from '../models/product.model';
 //import { addCollectionAndDocuments } from '../firebase/firebase.utils';
 //import { CategoryDb } from '../models/category.model';
@@ -34,16 +34,29 @@ const CategoryContextProvider = ({children}: Props) => {
     //   category => category.title.toLowerCase()
     // );
 
-    getCollectionAndDocuments<CategoryDb,Product[]>(
-        "categories",
-        (object) => object.title.toLowerCase(),
-        (object) => object.items)
-      .then( data => {
+    // getCollectionAndDocumentsMap<CategoryDb,Product[]>(
+    //     "categories",
+    //     (object) => object.title.toLowerCase(),
+    //     (object) => object.items)
+    //   .then( data => {
+    //     //console.log(data);
+    //     setCategories(data);
+    //     setIsReady(true);
+    //   })
+    //   .catch(err => console.log(err));  
+
+    getCollectionAndDocuments<CategoryDoc>("categories")
+      .then( categories => {
         //console.log(data);
-        setCategories(data);
+        const categoryMap = categories.reduce<{[key: string]: Product[]}>( (acc,doc) => {
+          acc[doc.title.toLowerCase()] = doc.items;
+          return acc;
+        },{})
+        setCategories(categoryMap);
         setIsReady(true);
       })
-      .catch(err => console.log(err));  
+      .catch(err => console.log(err));      
+
   },[])
 
   return (
@@ -54,3 +67,4 @@ const CategoryContextProvider = ({children}: Props) => {
 }
 
 export default CategoryContextProvider;
+

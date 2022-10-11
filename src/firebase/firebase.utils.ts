@@ -89,23 +89,31 @@ const addCollectionAndDocuments = async <T extends {[key: string]: any}>(
   console.log("done");
 }
 
-const getCollectionAndDocuments = async <T,K>(
-    collectionKey: string,
-    getPath: (object: T) => string,
-    getData: (object: T) => K
-  ) => {
+// const getCollectionAndDocumentsMap = async <T,K>(
+//     collectionKey: string,
+//     getPath: (object: T) => string,
+//     getData: (object: T) => K
+//   ) => {
+//   const colRef = collection(db, collectionKey);
+//   const q = query(colRef); //we need to convert colection reference to query to get a snapshop
+//   const querySnapshot = await getDocs(q);
+  
+//   //get collection (array) of documents and reduce to object keyed by categories
+//   const collectionMap = querySnapshot.docs.reduce<{[key: string]: K}>( (acc, doc) => {
+//     const object = doc.data() as T;
+//     acc[getPath(object)] = getData(object);
+//     return acc;
+//   },{});
+
+//   return collectionMap;
+// }
+
+const getCollectionAndDocuments = async <T>(collectionKey: string) => 
+{
   const colRef = collection(db, collectionKey);
   const q = query(colRef); //we need to convert colection reference to query to get a snapshop
   const querySnapshot = await getDocs(q);
-  
-  //get collection (array) of documents and reduce to object keyed by categories
-  const categoryMap = querySnapshot.docs.reduce<{[key: string]: K}>( (acc, doc) => {
-    const object = doc.data() as T;
-    acc[getPath(object)] = getData(object);
-    return acc;
-  },{});
-
-  return categoryMap;
+  return querySnapshot.docs.map( doc => ({id: doc.id, ...doc.data()}) as T);
 }
 
 export { auth, db, Timestamp, 

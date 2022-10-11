@@ -1,9 +1,13 @@
 import CheckoutItemCard from "../../components/checkout-item-card/checkout-item-card.component";
-import { useCartContext } from "../../hooks/useCartContext";
+import { useAppSelector } from "../../hooks/useAppSelector";
+import { selectCartItems, selectCartTotal } from "../../store/cart/cart.selector";
 import "./checkout.styles.scss";
 
 const Checkout = () => {
-  const { cartItems, cartTotal }  = useCartContext();
+  //const { cartItems, cartTotal }  = useCartContext();
+  const { cartItems } = useAppSelector(selectCartItems);    
+  const { cartTotal } = useAppSelector(selectCartTotal);    
+
   return (
     <div className="checkout-container">
       <div className="checkout-header"> 

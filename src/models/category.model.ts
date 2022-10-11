@@ -11,6 +11,12 @@ export interface CategoryDb {
   items: Product[];
 }
 
+export interface CategoryDoc {
+  id: string;
+  title: string;
+  items: Product[];
+}
+
 export interface CategoryMap {
   [key: string]: Product[];
 }
