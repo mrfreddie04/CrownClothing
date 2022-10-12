@@ -1,14 +1,13 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-import { onAuthUserStateChanged } from './firebase/firebase.utils';
 import Home from './routes/home/home.component';
 import NavBar from './routes/navigation/navigation.component';
 import NotFound from './routes/not-found/not-found.component';
 import Shop from './routes/shop/shop.component';
 import Authenticate from './routes/authenticate/authenticate.component';
 import Checkout from './routes/checkout/checkout.component';
-import { setCurrentUser } from './store/user/user.action';
+import { checkUserSession } from './store/user/user.action';
 import { useAppSelector } from './hooks/useAppSelector';
 import { selectUser } from './store/user/user.selector';
 
@@ -17,11 +16,12 @@ const App = () => {
   const { isReady, user }  = useAppSelector(selectUser);
 
   useEffect(() => {
-    const unsub = onAuthUserStateChanged((user) =>{
-      dispatch(setCurrentUser(user));
-    });
+    // const unsub = onAuthUserStateChanged((user) =>{
+    //   dispatch(setCurrentUser(user));
+    // });
+    // return unsub;
 
-    return unsub;
+    dispatch(checkUserSession());
   // eslint-disable-next-line    
   },[]); 
     

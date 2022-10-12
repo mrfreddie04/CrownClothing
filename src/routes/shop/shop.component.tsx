@@ -4,14 +4,16 @@ import { Route, Routes } from 'react-router-dom';
 import CategoriesPreview from "../categories-preview/categories-preview.component";
 import Category from "../category/category.component";
 import { useEffect } from "react";
-import { fetchCategoriesStartAsync } from "../../store/category/category.action";
+import { fetchCategoriesStart } from "../../store/category/category.action";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 
 const Shop = () => {
   const dispatch = useAppDispatch();
+  //const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchCategoriesStartAsync());
+    //dispatch(fetchCategoriesAsync());
+    dispatch(fetchCategoriesStart());
   // eslint-disable-next-line  
   },[]); 
     

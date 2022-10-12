@@ -1,6 +1,10 @@
 import { useState } from "react";
-import { createUserDocumentFromAuth, signInAuthUserWithEmailAndPassword, signInWithGooglePopup } from "../../firebase/firebase.utils";
+import { useDispatch } from 'react-redux';
+import { useAppSelector } from "../../hooks/useAppSelector";
+//import { createUserDocumentFromAuth, signInAuthUserWithEmailAndPassword, signInWithGooglePopup } from "../../firebase/firebase.utils";
 import { SignInData } from "../../models/signin.model";
+import { emailSignInStart, googleSignInStart } from "../../store/user/user.action";
+import { selectUser } from "../../store/user/user.selector";
 import Button from "../button/button.component";
 import FormInput from "../form-input/form-input.component";
 
@@ -18,48 +22,59 @@ const errorMessage: {[key:string]:string} = {
   "auth/wrong-password": "Invalid credentials"
 }
 
+const getError = (err: any) => {
+  const errMsg = typeof err.code === "string" && err.code in errorMessage
+    ? errorMessage[err.code as string]
+    : err.message;      
+  return `Login failed: ${errMsg}`;    
+}
+
 const SignInForm = () => {
   const [formFields, setFormFields] = useState<SignInData>(defaultFormFields);
   const { email, password } = formFields;
+  const dispatch = useDispatch();
+  const { error } = useAppSelector(selectUser);
 
-  const resetFormFields = () => setFormFields(defaultFormFields);
+  //const resetFormFields = () => setFormFields(defaultFormFields);
 
-  const signInWithGoogle = async () => {
-    try {
-      //setError("");
-      await signInWithGooglePopup();
-      const userCredential = await signInWithGooglePopup();
-      const { user } = userCredential;
-      await createUserDocumentFromAuth(user); //moved to the auth state change callback (observer)
-    } catch(err: any) {
-      //setError(err.message);
-      console.log("Login failed: ", err.message);
-    }
+  const signInWithGoogle = () => {
+    dispatch(googleSignInStart());
+    // try {
+    //   //setError("");
+    //   //await signInWithGooglePopup();
+    //   const userCredential = await signInWithGooglePopup();
+    //   const { user } = userCredential;
+    //   await createUserDocumentFromAuth(user); //moved to the auth state change callback (observer)
+    // } catch(err: any) {
+    //   //setError(err.message);
+    //   console.log("Login failed: ", err.message);
+    // }
   }  
 
-  const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignIn = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     //console.log({ email, password} );
-
-    try {
-      const userCredential = await signInAuthUserWithEmailAndPassword(email, password);
+    dispatch(emailSignInStart(email, password));
+    //resetFormFields();  
+    // try {
+    //   const userCredential = await signInAuthUserWithEmailAndPassword(email, password);
       
-      if(!userCredential) throw new Error("Could not complete login");
+    //   if(!userCredential) throw new Error("Could not complete login");
 
-      //const { user } = userCredential;
+    //   //const { user } = userCredential;
 
-      //setUser(user);
+    //   //setUser(user);
 
-      //console.log(user);
+    //   //console.log(user);
      
-      resetFormFields();  
+    //   resetFormFields();  
 
-    } catch(err: any) {
-      const errMsg = typeof err.code === "string" && err.code in errorMessage
-        ? errorMessage[err.code as string]
-        : err.message;      
-      console.log("Login failed: ", errMsg);
-    }
+    // } catch(err: any) {
+    //   const errMsg = typeof err.code === "string" && err.code in errorMessage
+    //     ? errorMessage[err.code as string]
+    //     : err.message;      
+    //   console.log("Login failed: ", errMsg);
+    // }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,6 +108,7 @@ const SignInForm = () => {
           <Button type="button" buttonType="google" onClick={signInWithGoogle}>Google Sign In</Button>       
         </div>                   
       </form>
+      {error && <p>{getError(error)}</p>}
     </div>
   )
 }

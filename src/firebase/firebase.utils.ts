@@ -19,6 +19,7 @@ import {
   query, getDocs,
   Timestamp
 } from "firebase/firestore";  //firestore database
+import { UserData } from "../models/user.model";
 
 //Custom functionality encapsulatin Firebase interface
 //Authentication - via google
@@ -49,28 +50,49 @@ const updateAuthUserProfile = updateProfile;
 
 const onAuthUserStateChanged = (callback: (user:User | null)=>void) => onAuthStateChanged(auth, callback);
 
+const getCurrentUser = () => {
+  return new Promise<User|null>((resolve,reject)=>{
+    const unsub = onAuthStateChanged(auth,
+      (user) => {
+        unsub();
+        //console.log("Get Current Data", user);
+        resolve(user);
+      },
+      (err) => {
+        unsub();
+        reject(err);
+      }
+    )
+  })
+}
+
 //create user document
-const createUserDocumentFromAuth = async (user: User, extra: {[key:string]:any} = {}) => {
+const createUserDocumentFromAuth = async (user: User | null, extra: {[key:string]:any} = {}) => {
+  if(!user) return null;
+
   const docRef = doc(db, "users", user.uid);
-  const userSnapshot = await getDoc(docRef);
+  let userSnapshot = await getDoc(docRef);
   
-  if(userSnapshot.exists()) return docRef;
-
-  const userDocument = {
-    displayName: user.displayName,
-    email: user.email,
-    createdAt: Timestamp.fromDate(new Date()),
-    ...extra
+  if(!userSnapshot.exists()) {
+    const userDocument = {
+      displayName: user.displayName,
+      email: user.email,
+      createdAt: Timestamp.fromDate(new Date()),
+      ...extra
+    }
+  
+    try {
+      await setDoc(docRef, userDocument);  
+    } catch(err) {
+      //console.log("Error creating the user", err);
+      throw new Error("Error creating the user");
+    }
+    userSnapshot = await getDoc(docRef);
   }
 
-  try {
-    await setDoc(docRef, userDocument);  
-  } catch(err) {
-    //console.log("Error creating the user", err);
-    throw new Error("Error creating the user");
-  }
+  const userDoc = ({id: userSnapshot.id, ...userSnapshot.data()}) as UserData;
 
-  return docRef;
+  return userDoc;
 }
 
 //bcp json into fb
@@ -119,6 +141,17 @@ const getCollectionAndDocuments = async <T>(collectionKey: string) =>
   return querySnapshot.docs.map( doc => ({id: doc.id, ...doc.data()}) as T);
 }
 
+// const getCategoriesAndDocuments = async () => 
+// {
+//   const colRef = collection(db, "categories");
+//   const q = query(colRef); //we need to convert colection reference to query to get a snapshop
+//   const querySnapshot = await getDocs(q);
+
+//   //await Promise.reject(new Error("Test error"));
+
+//   return querySnapshot.docs.map( doc => ({id: doc.id, ...doc.data()}) as CategoryDoc);
+// }
+
 export { auth, db, Timestamp, 
   signUpAuthUserWithEmailAndPassword,
   signInAuthUserWithEmailAndPassword, 
@@ -129,5 +162,7 @@ export { auth, db, Timestamp,
   signInWithGoogleRedirect,
   onAuthUserStateChanged,
   addCollectionAndDocuments,
-  getCollectionAndDocuments
+  getCollectionAndDocuments,
+  getCurrentUser
+  //getCategoriesAndDocuments
 };

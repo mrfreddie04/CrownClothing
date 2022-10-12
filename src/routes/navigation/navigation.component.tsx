@@ -1,7 +1,8 @@
 import { Outlet } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { ReactComponent as CrownLogo} from "../../assets/crown.svg";
 //import { useAuthContext } from '../../hooks/useAuthContext';
-import { signOutAuthUser } from '../../firebase/firebase.utils';
+//import { signOutAuthUser } from '../../firebase/firebase.utils';
 
 import CartIcon from '../../components/cart-icon/cart-icon.component';
 import CartDropdown from '../../components/cart-dropdown/cart-dropdown.component';
@@ -10,20 +11,23 @@ import { Navigation, Logo, NavLinks, NavLink, MainContent } from "./navigation.s
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { selectCartIsOpen } from '../../store/cart/cart.selector';
 import { selectUser } from '../../store/user/user.selector';
+import { signOutStart } from '../../store/user/user.action';
 
 const NavBar = () => {
   
   //const { user } = useAuthContext();
   const { user }  = useAppSelector(selectUser);
   const { isCartOpen } = useAppSelector(selectCartIsOpen);   
+  const dispatch = useDispatch();
 
   //console.log("Navbar render");
-  const handleSignOut = async () => {
-    try {
-      await signOutAuthUser();
-    } catch(err: any) {
-      console.log("Logout failed: ", err.message);      
-    }
+  const handleSignOut = () => {
+    dispatch(signOutStart());
+    // try {
+    //   await signOutAuthUser();
+    // } catch(err: any) {
+    //   console.log("Logout failed: ", err.message);      
+    // }
   }
 
   return (

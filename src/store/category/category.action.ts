@@ -1,4 +1,4 @@
-import { Dispatch } from 'react';
+import { Dispatch, AnyAction } from 'redux';
 import { getCollectionAndDocuments } from '../../firebase/firebase.utils';
 import { CategoryDoc } from '../../models/category.model';
 import { createAction } from '../../utils/reducer.utils';
@@ -8,8 +8,8 @@ import { CategoriesActionType } from './category.types';
 //   createAction(CategoriesActionType.SET_CATEGORIES, categories);
 
 //Thunk actions
-export const fetchCategoriesStartAsync = () => {
-  return async (dispatch: Dispatch<any>) => {
+export const fetchCategoriesAsync = () => {
+  return async (dispatch: Dispatch<AnyAction>) => {
     dispatch(fetchCategoriesStart());
     try {
       const categories = await getCollectionAndDocuments<CategoryDoc>("categories");
@@ -22,15 +22,15 @@ export const fetchCategoriesStartAsync = () => {
 }
 
 //Regular Synchronous action
-const fetchCategoriesStart = () => {
+export const fetchCategoriesStart = () => {
   return createAction(CategoriesActionType.FETCH_CATEGORIES_START);  
 }  
 
-const fetchCategoriesSuccess = (categories: CategoryDoc[]) => {
+export const fetchCategoriesSuccess = (categories: CategoryDoc[]) => {
   return createAction(CategoriesActionType.FETCH_CATEGORIES_SUCCESS, categories);  
 }  
 
-const fetchCategoriesFailed = (error: any) => {
+export const fetchCategoriesFailed = (error: any) => {
   return createAction(CategoriesActionType.FETCH_CATEGORIES_FAILED, error);  
 }  
 
