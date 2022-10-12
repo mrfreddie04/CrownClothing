@@ -3,7 +3,7 @@ import { useAppSelector } from "../../hooks/useAppSelector";
 import { Product } from "../../models/product.model";
 import { addItemToCart } from "../../store/cart/cart.action";
 import { selectCartItems } from "../../store/cart/cart.selector";
-import Button from "../button/button.component";
+import Button, { ButtonTypes } from "../button/button.component";
 import "./product-card.styles.scss";
 
 interface Props {
@@ -27,7 +27,7 @@ const ProductCard = ({product}: Props) => {
         <span className="name">{name}</span>  
         <span className="price">{price}</span>
       </div>
-      <Button buttonType="inverted" onClick={addProductToCart}>
+      <Button buttonType={ButtonTypes.Inverted} onClick={addProductToCart}>
         Add to cart
       </Button>
     </div>

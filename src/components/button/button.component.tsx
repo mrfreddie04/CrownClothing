@@ -1,30 +1,44 @@
 import React from 'react'
-import "./button.style.scss";
+import { KVP } from '../../models/general.model';
+
+import {
+  BaseButton,
+  GoogleSignInButton,
+  InvertedButton,
+  ButtonSpinner,
+} from './button.styles';
+
+export enum ButtonTypes {
+  Inverted = "inverted",
+  Google = "google",
+  Base = "base"
+}
+
+const getButton = (buttonType:ButtonTypes = ButtonTypes.Base): typeof BaseButton =>
+  ({
+    [ButtonTypes.Base]: BaseButton,
+    [ButtonTypes.Google]: GoogleSignInButton,
+    [ButtonTypes.Inverted]: InvertedButton,
+  }[buttonType]);
 
 type Props = {
   children: React.ReactNode;
-  buttonType?: "google" | "default" | "inverted";
-} & {[key:string]:any};
+  buttonType?: ButtonTypes;
+  isLoading?: boolean;
+} & KVP;
 
-const button_type_classes = {
-  google: "google-sign-in",
-  default: "",
-  inverted: "inverted"
-}
-
-const Button = ({children, buttonType,...buttonOptions}: Props) => {
+const Button = ({children, buttonType, isLoading,...buttonOptions}: Props) => {
+  const CustomButton = getButton(buttonType);
   return (
-    <button 
-      {...buttonOptions}
-      className={`button-container ${button_type_classes[buttonType!]}`}
-    >
-      {children}
-    </button>
+    <CustomButton disabled={isLoading} {...buttonOptions}>
+      {isLoading ? <ButtonSpinner /> : children}
+    </CustomButton>
   )
 }
 
 Button.defaultProps = {
-  buttonType: "default"
+  buttonType: ButtonTypes.Base,
+  isLoading: false
 };
 
 export default Button;

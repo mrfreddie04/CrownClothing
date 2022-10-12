@@ -1,4 +1,5 @@
 import CheckoutItemCard from "../../components/checkout-item-card/checkout-item-card.component";
+import PaymentForm from "../../components/payment-form/payment-form.component";
 import { useAppSelector } from "../../hooks/useAppSelector";
 import { selectCartItems, selectCartTotal } from "../../store/cart/cart.selector";
 import "./checkout.styles.scss";
@@ -31,6 +32,7 @@ const Checkout = () => {
         <CheckoutItemCard key={cartItem.id} cartItem={cartItem}/>
       ))}
       <span className="total">Total: ${cartTotal}</span>
+      <PaymentForm/>
     </div>
   )
 }

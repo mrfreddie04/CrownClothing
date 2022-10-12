@@ -5,7 +5,7 @@ import { useAppSelector } from "../../hooks/useAppSelector";
 import { SignInData } from "../../models/signin.model";
 import { emailSignInStart, googleSignInStart } from "../../store/user/user.action";
 import { selectUser } from "../../store/user/user.selector";
-import Button from "../button/button.component";
+import Button, { ButtonTypes } from "../button/button.component";
 import FormInput from "../form-input/form-input.component";
 
 import "./sign-in-form.styles.scss";
@@ -105,7 +105,7 @@ const SignInForm = () => {
         />   
         <div className="buttons-container">
           <Button type="submit">Sign In</Button>     
-          <Button type="button" buttonType="google" onClick={signInWithGoogle}>Google Sign In</Button>       
+          <Button type="button" buttonType={ButtonTypes.Google} onClick={signInWithGoogle}>Google Sign In</Button>       
         </div>                   
       </form>
       {error && <p>{getError(error)}</p>}
